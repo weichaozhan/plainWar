@@ -5,6 +5,7 @@ module.exports = {
    */
   entry: './src/index.ts',
   // Put your normal webpack config below here
+  watch: true,
   module: {
     rules: require('./webpack.rules'),
   },

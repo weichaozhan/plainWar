@@ -111,7 +111,7 @@ module.exports = [
       {
         loader: 'url-loader',
         options: {
-          limit: 8192,
+          limit: false,
           fallback: 'file-loader',
           name: '[name][contentHash:8].[ext]',
           outputPath: 'assets/images/',

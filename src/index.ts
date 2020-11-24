@@ -1,4 +1,9 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Tray, NativeImage } from 'electron';
+import fs from 'fs';
+import path from 'path';
+import menuTemplate from './mainProcess/menu';
+import iconPath from './assets/shortDomain.png';
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -11,11 +16,18 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
+    icon: path.resolve(__dirname, iconPath),
+    title: '测试',
+    // frame: false,
     webPreferences: {
       nodeIntegration: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      contextIsolation: true
     }
   });
+
+  mainWindow.setMenu(menuTemplate);
+  mainWindow.setMenuBarVisibility(false);
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);

@@ -1,33 +1,26 @@
 import { hot, setConfig } from 'react-hot-loader';
-import React, { FC, useEffect } from 'react';
+import React, { FC } from 'react';
 import { Provider } from 'react-redux';
-import {  Button } from 'antd';
-import { remote } from 'electron';
+
+import MainCanvas from './MainCanvas';
 
 import './styles/index.css';
 import 'antd/dist/antd.css';
 
-// import styles from './index.module.scss';
 import store from './store/index';
 
-const { BrowserView, BrowserWindow } = remote;
+const NODE_ENV = process.env.NODE_ENV;
 
-const App: FC = () => {
-  useEffect(() => {
-    console.log('BrowserWindow,BrowserView', BrowserWindow.getAllWindows(), new BrowserView());
-  }, []);
-
+const App: FC = () => {  
   return <Provider store={store} >
-    <div>
-      <Button>
-        test
-      </Button>
-    </div>
+    <MainCanvas/>
   </Provider> ;
 };
 
-setConfig({
-  reloadHooks: false
-});
+if (NODE_ENV === 'development') {
+  setConfig({
+    reloadHooks: false
+  });
+}
 
-export default hot(module)(App);
+export default NODE_ENV === 'development' ? hot(module)(App) : App;

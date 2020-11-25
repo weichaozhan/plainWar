@@ -1,19 +1,24 @@
-import { app, BrowserWindow, Tray, NativeImage } from 'electron';
-import fs from 'fs';
+import { app, BrowserWindow } from 'electron';
 import path from 'path';
+
+import runTray from './mainProcess/tray';
 import menuTemplate from './mainProcess/menu';
 import iconPath from './assets/shortDomain.png';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
+
+const NODE_ENV = process.env.NODE_ENV;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
 
+let mainWindow: BrowserWindow;
 const createWindow = (): void => {
+  mainWindow && mainWindow.removeAllListeners();
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
     icon: path.resolve(__dirname, iconPath),
@@ -32,14 +37,36 @@ const createWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
+  mainWindow.on('minimize', () => {
+    mainWindow.hide();
+  });
+  mainWindow.on('close', (e) => {
+    e.preventDefault();
+    mainWindow.hide();
+  });
+
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (NODE_ENV === 'development') {
+    mainWindow.webContents.openDevTools();
+  }
 };
+
+const gotTheLock = app.requestSingleInstanceLock();
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
+app.on('ready', () => {
+  if (!gotTheLock) {
+    app.quit();
+  } else {
+    createWindow();
+  }
+});
+
+app.whenReady().then(() => {
+  runTray(mainWindow, app);
+})
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

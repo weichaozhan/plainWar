@@ -11,6 +11,8 @@ interface IState {
 }
 
 class MainCanvas extends Component<IProps, IState> {
+  canvasEle: HTMLCanvasElement = null;
+  
   constructor(props: any) {
     super(props);
 
@@ -19,8 +21,17 @@ class MainCanvas extends Component<IProps, IState> {
     };
   }
 
+  refCreate = (element: HTMLCanvasElement) => {
+    this.canvasEle = element;
+  };
+  
+  componentDidMount() {
+    const context = this.canvasEle.getContext('2d');
+    console.log('context', context);
+  }
+
   render() {
-    return <canvas className={styles['main-canvas']} />;
+    return <canvas ref={this.refCreate} className={styles['main-canvas']} />;
   }
 }
 

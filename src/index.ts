@@ -1,6 +1,8 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import path from 'path';
 
+import { windowState, windowResizeState } from './constants';
+import StorageNode from './mainProcess/storage';
 import runTray from './mainProcess/tray';
 import menuTemplate from './mainProcess/menu';
 import iconPath from './assets/shortDomain.png';
@@ -16,11 +18,20 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 
 let mainWindow: BrowserWindow;
 const createWindow = (): void => {
-  mainWindow && mainWindow.removeAllListeners();
+  mainWindow?.removeAllListeners();
+
+  let mainWindowState: BrowserWindowConstructorOptions = StorageNode.getValue(windowState);
+
+  if (!mainWindowState) {
+    mainWindowState = {
+      height: 600,
+      width: 800
+    }
+    StorageNode.setValue(windowState, mainWindowState);
+  }
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
     icon: path.resolve(__dirname, iconPath),
     title: '测试',
     // frame: false,
@@ -28,7 +39,8 @@ const createWindow = (): void => {
       nodeIntegration: true,
       enableRemoteModule: true,
       contextIsolation: true
-    }
+    },
+    ...mainWindowState
   });
 
   mainWindow.setMenu(menuTemplate);
@@ -37,12 +49,42 @@ const createWindow = (): void => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
+  const mainWinResizeState = StorageNode.getValue(windowResizeState) ?? {};
+
+  if (mainWinResizeState?.maximize) {
+    mainWindow.maximize();
+  }
+
   mainWindow.on('minimize', () => {
     mainWindow.hide();
   });
   mainWindow.on('close', (e) => {
     e.preventDefault();
     mainWindow.hide();
+  });
+  mainWindow.on('resized', () => {
+    const winBounds = mainWindow.getBounds();
+    const newState = {
+      ...mainWindowState,
+      height: winBounds.height,
+      width: winBounds.width
+    };
+
+    StorageNode.setValue(windowState, newState);
+  });
+  mainWindow.on('maximize', () => {
+    const oldResizeState = StorageNode.getValue(windowResizeState) ?? {};
+    StorageNode.setValue(windowResizeState, {
+      ...oldResizeState,
+      maximize: true
+    });
+  });
+  mainWindow.on('unmaximize', () => {
+    const oldResizeState = StorageNode.getValue(windowResizeState) ?? {};
+    StorageNode.setValue(windowResizeState, {
+      ...oldResizeState,
+      maximize: false
+    });
   });
 
   // Open the DevTools.

@@ -1,5 +1,19 @@
+$canvasMarginLeft: 100px;
+
 .main-canvas {
-  width: 100%;
+  margin-left: $canvasMarginLeft;
+  width: calc(100% - #{$canvasMarginLeft});
   height: 100%;
-  background: #000;
+}
+
+.toolbar {
+  display: flex;
+  width: 100px;
+  height: 100%;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  background-color: #fff;
+  z-index: 1;
 }

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import styles from './index.module.scss';
 
 interface IProps {
+  bgColor: string;
   [props: string]: any;
 }
 
@@ -31,7 +32,9 @@ class MainCanvas extends Component<IProps, IState> {
   }
 
   render() {
-    return <canvas ref={this.refCreate} className={styles['main-canvas']} />;
+    const { bgColor } = this.props;
+
+    return <canvas ref={this.refCreate} className={styles['main-canvas']} style={{ background: bgColor }} />;
   }
 }
 

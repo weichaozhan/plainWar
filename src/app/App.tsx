@@ -1,5 +1,5 @@
 // import { hot, setConfig } from 'react-hot-loader';
-import React, { FC, useState } from 'react';
+import React, { Dispatch, FC, SetStateAction, useState } from 'react';
 import { Provider } from 'react-redux';
 
 import MainCanvas from './MainCanvas';
@@ -17,12 +17,19 @@ const canvasBgColor = localStorage.getItem(canvasProps.canvasBgColor) || colors.
 
 const App: FC = () => {
   const [bgClor, setBgColor] = useState(canvasBgColor);
+  const [imgPath, setImgPath]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState(undefined);
   
   return <Provider store={store} >
-    <ToolBar defaultColor={canvasBgColor} onChangeBGColor={(color: string) => {
-      setBgColor(color);
-    }} />
-    <MainCanvas bgColor={bgClor} />
+    <ToolBar
+      defaultColor={canvasBgColor}
+      onChangeImgFile={imgPath => {
+        setImgPath(imgPath);
+      }}
+      onChangeBGColor={(color: string) => {
+        setBgColor(color);
+      }}
+    />
+    <MainCanvas bgColor={bgClor} imgPath={imgPath} />
   </Provider> ;
 };
 

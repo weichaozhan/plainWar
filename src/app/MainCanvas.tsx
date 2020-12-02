@@ -4,10 +4,12 @@ import styles from './index.module.scss';
 
 interface IProps {
   bgColor: string;
+  imgPath?: string;
   [props: string]: any;
 }
 
 interface IState {
+  canvasCtx: null | undefined | CanvasRenderingContext2D;
   [props: string]: any;
 }
 
@@ -18,7 +20,7 @@ class MainCanvas extends Component<IProps, IState> {
     super(props);
 
     this.state = {
-
+      canvasCtx: null
     };
   }
 
@@ -28,7 +30,26 @@ class MainCanvas extends Component<IProps, IState> {
   
   componentDidMount() {
     const context = this.canvasEle.getContext('2d');
-    console.log('context', context);
+    this.setState({
+      canvasCtx: context
+    });
+  }
+
+  componentDidUpdate() {
+    this.setImgBg();
+  }
+
+  setImgBg() {
+    const { imgPath } = this.props;
+    const { canvasCtx } = this.state;
+
+    const img = new Image();
+
+    img.onload = () => {
+      canvasCtx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvasCtx.canvas.width, canvasCtx.canvas.height);
+    };
+
+    img.src = imgPath;
   }
 
   render() {

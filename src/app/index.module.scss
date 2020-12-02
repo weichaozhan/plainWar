@@ -1,4 +1,4 @@
-$canvasMarginLeft: 100px;
+$canvasMarginLeft: 150px;
 
 .main-canvas {
   margin-left: $canvasMarginLeft;
@@ -8,7 +8,7 @@ $canvasMarginLeft: 100px;
 
 .toolbar {
   display: flex;
-  width: 100px;
+  width: $canvasMarginLeft;
   height: 100%;
   justify-content: space-around;
   align-items: center;

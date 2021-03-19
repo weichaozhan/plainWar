@@ -3,7 +3,7 @@ import React, { Dispatch, FC, SetStateAction, useState } from 'react';
 import { Provider } from 'react-redux';
 
 import MainCanvas from './MainCanvas';
-import ToolBar from './ToolBar';
+// import ToolBar from './ToolBar';
 
 import './styles/index.css';
 import 'antd/dist/antd.css';
@@ -20,15 +20,12 @@ const App: FC = () => {
   const [imgPath, setImgPath]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState(undefined);
   
   return <Provider store={store} >
-    <ToolBar
+    {/* <ToolBar
       defaultColor={canvasBgColor}
-      onChangeImgFile={imgPath => {
-        setImgPath(imgPath);
-      }}
       onChangeBGColor={(color: string) => {
         setBgColor(color);
       }}
-    />
+    /> */}
     <MainCanvas bgColor={bgClor} imgPath={imgPath} />
   </Provider> ;
 };

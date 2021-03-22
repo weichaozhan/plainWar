@@ -40,6 +40,7 @@ const createWindow = (): void => {
       enableRemoteModule: true,
       contextIsolation: true
     },
+    resizable: false,
     ...mainWindowState
   });
 

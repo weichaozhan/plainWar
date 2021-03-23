@@ -111,7 +111,7 @@ module.exports = [
       {
         loader: 'url-loader',
         options: {
-          limit: 8102,
+          limit: false,
           fallback: 'file-loader',
           name: '[name].[ext]',
           outputPath: 'assets/',

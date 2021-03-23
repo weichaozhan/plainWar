@@ -1,5 +1,5 @@
-import fightImg from '../../../__statics/fight.png';
-import boomImg from '../../../__statics/boom.png';
+import fightImg from '../assets/fight.png';
+import boomImg from '../assets/boom.png';
 import { flySize, boomSize, enemyAddTimeout } from './constant';
 
 export interface IFly {

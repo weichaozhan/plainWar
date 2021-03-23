@@ -33,14 +33,14 @@ const createWindow = (): void => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, iconPath),
-    title: '测试',
+    title: '飞机大战',
     // frame: false,
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
       contextIsolation: true
     },
-    resizable: false,
+    // resizable: true,
     ...mainWindowState
   });
 

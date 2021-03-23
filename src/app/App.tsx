@@ -29,7 +29,7 @@ const App: FC = () => {
   const [isGameover, setIsGameOver] = useState(false);
   // const [bgClor, setBgColor] = useState(canvasBgColor);
   // const [imgPath, setImgPath]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState(undefined);
-  
+
   return <Provider store={store} >
     {/* <ToolBar
       defaultColor={canvasBgColor}
@@ -65,9 +65,11 @@ const App: FC = () => {
         </h3>
         
         <button onClick={() => {
-          mainCanvas.current.restGame();
-          setIsGameOver(false);
           setScore(0);
+          setIsGameOver(false);
+          setTimeout(() => {
+            mainCanvas.current.restGame();
+          });
         }} >
           Restart
         </button>

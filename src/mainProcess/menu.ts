@@ -10,15 +10,15 @@ const template: Electron.MenuItemConstructorOptions[] = [
   // },
 ];
 
-if (NODE_ENV === 'development') {
-  template.push({
-    role: 'reload',
-    accelerator: 'f5'
-  }, {
-    label: '',
-    role: 'toggleDevTools',
-    accelerator: 'f12'
-  });
-}
+// if (NODE_ENV === 'development') {
+// }
+template.push({
+  role: 'reload',
+  accelerator: 'f5'
+}, {
+  label: '',
+  role: 'toggleDevTools',
+  accelerator: 'f12'
+});
 
 export default Menu.buildFromTemplate(template);

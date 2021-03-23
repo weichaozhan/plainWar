@@ -111,16 +111,24 @@ module.exports = [
       {
         loader: 'url-loader',
         options: {
-          limit: false,
+          limit: 8102,
           fallback: 'file-loader',
-          name: '[name][contentHash:8].[ext]',
-          outputPath: 'assets/images/',
+          name: '[name].[ext]',
+          outputPath: 'assets/',
         }
       },
     ],
   }, 
   {
     test: /\.(woff|woff2|eot|ttf|otf|mp3)$/,
-    use: ['file-loader'],
+    use: [
+      {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath: 'assets/',
+        }
+      }
+    ],
   }
 ];

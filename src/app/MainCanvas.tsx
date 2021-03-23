@@ -23,6 +23,10 @@ interface IState {
 class MainCanvas extends Component<IProps, IState> {
   canvasH = 0;
   canvasW = 0;
+
+  ratioX = 1;
+  ratioY = 1;
+  
   canvasEle: HTMLCanvasElement = null;
   isPointInFightfly = false;
   fightflyAnim: number = null;
@@ -41,6 +45,8 @@ class MainCanvas extends Component<IProps, IState> {
     this.state = {
       canvasCtx: null
     };
+
+    this.setRatio = this.setRatio.bind(this);
   }
 
   refCreate = (element: HTMLCanvasElement) => {
@@ -57,31 +63,44 @@ class MainCanvas extends Component<IProps, IState> {
     this.setState({
       canvasCtx: context
     }, () => {
+      window.addEventListener('resize', this.setRatio);
+      
       this.paintPlane();
       this.moveEnemies();
     });
   }
-
+  
   componentWillUnmount() {
     cancelAnimationFrame(this.enemiesAnimTimer);
+    window.removeEventListener('resize', this.setRatio);
+  }
+  
+  setRatio() {
+    this.ratioX = this.canvasW / this.canvasEle.clientWidth;
+    this.ratioY = this.canvasH / this.canvasEle.clientHeight;
   }
 
   restGame() {
-    const { canvasW, canvasH } = this;
-
-    this.state.canvasCtx.clearRect(0, 0, canvasW, canvasH);
-
-    cancelAnimationFrame(this.enemiesAnimTimer);
-    cancelAnimationFrame(this.fightflyAnim);
-
-    this.isGameOver = false;
-
-    this.fly = flyInit(canvasW, canvasH);
-    this.enemies.clear();
-    this.bullets.clear();
-    
-    this.paintPlane();
-    this.moveEnemies();
+    try {
+      const { canvasW, canvasH } = this;
+  
+      this.state.canvasCtx.clearRect(0, 0, canvasW, canvasH);
+  
+      cancelAnimationFrame(this.enemiesAnimTimer);
+      cancelAnimationFrame(this.fightflyAnim);
+  
+      this.isGameOver = false;
+      this.isPointInFightfly = false;
+  
+      this.fly = flyInit(canvasW, canvasH);
+      this.enemies.clear();
+      this.bullets.clear();
+      
+      this.paintPlane();
+      this.moveEnemies();
+    } catch(err) {
+      console.log('err', err);
+    }
   }
 
   moveEnemies() {
@@ -169,8 +188,7 @@ class MainCanvas extends Component<IProps, IState> {
     canvasCtx.beginPath();
 
     const path = getFightFlyPath(this.fly);
-    
-    return  canvasCtx.isPointInPath(path, mouse.x, mouse.y);
+    return  canvasCtx.isPointInPath(path, mouse.x * this.ratioX, mouse.y * this.ratioY);
   }
 
   paintPlane() {
@@ -194,7 +212,10 @@ class MainCanvas extends Component<IProps, IState> {
       && xStart <= maxX
       && yStart <= maxY
     ) {
-      const { movementX, movementY } = e;
+      let { movementX, movementY } = e;
+      movementX *= this.ratioX;
+      movementY *= this.ratioY
+
       let newX = xStart + movementX;
       let newY = yStart + movementY;
 

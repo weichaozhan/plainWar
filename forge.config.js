@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   packagerConfig: {
-    name: 'test',
+    name: 'PlainWar',
     icon: path.resolve(__dirname, './src/assets/app'),
     asar: true,
     overwrite: true
@@ -11,8 +11,8 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        title: 'test',
-        exe: 'test.exe',
+        title: 'PlainWar',
+        exe: 'PlainWar.exe',
         iconUrl: path.resolve(__dirname, './src/assets/shortDomain.png'),
         setupIcon: path.resolve(__dirname, './src/assets/app.ico'),
         loadingGif: path.resolve(__dirname, './src/assets/setupLoading.gif')

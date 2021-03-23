@@ -2,13 +2,17 @@ import React, { Component } from 'react';
 
 import styles from './index.module.scss';
 
-import { flySize, enemiesMoveSpeed, boomSize } from './utils/constant';
-import { TEnemies, flyInit, getFightFlyPath, paintFightFly, paintEnemy, addEnemyLoop, updateEnemy, checkFightFlyEnemyImpact, paintBoom } from './utils/tools';
+import { flySize, enemiesMoveSpeed, boomSize, bulletMoveSpeed } from './utils/constant';
+import { TEnemies, IFly, flyInit, getFightFlyPath, paintFightFly, paintEnemy, addEnemyLoop, updateEnemy, checkFightFlyEnemyImpact, paintBoom } from './utils/tools';
+import { addBulletLoop, paintBullet, TBullets, updateBullet, checkBulletEnemyImpact } from './utils/bullets';
+
 interface IProps {
   bgColor: string;
+  score: number;
   // imgPath?: string;
   onGameOver: (...rest: any[]) => any;
-  avoidSuccess: (...rest: any[]) => any;
+  destroySuccess: (...rest: any[]) => any;
+  escepedEnemy: (...rest: any[]) => any;
 }
 
 interface IState {
@@ -23,10 +27,11 @@ class MainCanvas extends Component<IProps, IState> {
   isPointInFightfly = false;
   fightflyAnim: number = null;
   enemies: TEnemies = new Map();
+  bullets: TBullets = new Map();
 
   isGameOver = false;
 
-  fly: ReturnType<typeof flyInit> = null;
+  fly: IFly = null;
 
   enemiesAnimTimer: number = null;
   
@@ -73,15 +78,17 @@ class MainCanvas extends Component<IProps, IState> {
 
     this.fly = flyInit(canvasW, canvasH);
     this.enemies.clear();
+    this.bullets.clear();
     
     this.paintPlane();
     this.moveEnemies();
   }
 
   moveEnemies() {
-    const { state, fly, enemies, canvasW, canvasH } = this;
+    const { state, fly, enemies, canvasW, canvasH, bullets } = this;
 
     addEnemyLoop(enemies, canvasW);
+    addBulletLoop(bullets, fly);
 
     const { canvasCtx } = state;
 
@@ -89,20 +96,46 @@ class MainCanvas extends Component<IProps, IState> {
 
     paintFightFly(canvasCtx, fly);
     
+    let ei = 0;
     for (const enemyMap of enemies.entries()) {
+      let isEnemyDestroied = false;
       const enemy = enemyMap[1];
       
       paintEnemy(canvasCtx, enemy);
 
       // Impact checking: plane with enemy
-      this.isGameOver = this.isGameOver ? true : checkFightFlyEnemyImpact(fly, enemy);
+      this.isGameOver = this.isGameOver ? true : (checkFightFlyEnemyImpact(fly, enemy) || this.props.score < 0);
 
-      if (enemy.firstPoint[1] >= canvasH) {
+      for (const bulletMap of bullets.entries()) {
+        const bullet = bulletMap[1];
+
+        if (ei === 0) {
+          paintBullet(canvasCtx, bullet);
+        }
+
+        isEnemyDestroied = isEnemyDestroied ? true : checkBulletEnemyImpact(bullet, enemy);
+
+        if (bullet.position[1] <= 0 || isEnemyDestroied) {
+          bullets.delete(bulletMap[0]);
+        } else {
+          bullets.set(bulletMap[0], updateBullet(bullet, bulletMoveSpeed));
+        }
+      }
+
+      if (enemy.firstPoint[1] >= canvasH || isEnemyDestroied) {
+        if (isEnemyDestroied) {
+          isEnemyDestroied && paintBoom(canvasCtx, [enemy.firstPoint[0] - boomSize[0]/2, enemy.firstPoint[1]]);
+          this.props.destroySuccess?.();
+        }
+        if (enemy.firstPoint[1] >= canvasH) {
+          this.props.escepedEnemy?.();
+        }
         enemies.delete(enemyMap[0]);
-        this.props.avoidSuccess?.();
       } else {
         enemies.set(enemyMap[0], updateEnemy(enemy, 0, enemiesMoveSpeed));
       }
+
+      ei++;
     }
 
     if (!this.isGameOver) {

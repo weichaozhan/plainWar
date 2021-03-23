@@ -39,13 +39,19 @@ const App: FC = () => {
     /> */}
     <MainCanvas
       ref={mainCanvas}
+      score={score}
       bgColor={canvasBgColor}
       onGameOver={() => {
         setIsGameOver(true);
       }}
-      avoidSuccess={() => {
+      destroySuccess={() => {
         setScore(score + 1);
       }}
+      escepedEnemy={
+        () => {
+          setScore(score - 1);
+        } 
+      }
       // imgPath={imgPath}
     />
     <h1 className={styles['score']} >
@@ -55,7 +61,7 @@ const App: FC = () => {
     <div className={`${styles['gameover-wrapper']} ${isGameover ? styles['gameover-wrapper-show'] : ''}`} >
       <div>
         <h3>
-          游戏结束！
+          GAME OVER !
         </h3>
         
         <button onClick={() => {
@@ -63,7 +69,7 @@ const App: FC = () => {
           setIsGameOver(false);
           setScore(0);
         }} >
-          重新开始
+          Restart
         </button>
       </div>
     </div>

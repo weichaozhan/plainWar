@@ -2,10 +2,11 @@ import fightImg from '../assets/fight.png';
 import boomImg from '../assets/boom.png';
 import { flySize, boomSize, enemyAddTimeout } from './constant';
 
-export const flyInit = (canvasW: number, canvasH: number): {
+export interface IFly {
   position: [number, number];
-  img: HTMLImageElement;
-} => {
+    img: HTMLImageElement;
+}
+export const flyInit = (canvasW: number, canvasH: number): IFly => {
   const halfCanvasW = canvasW / 2 - flySize[0] / 2;
   const halfCanvasH = canvasH - flySize[1] - 10;
   const img = new Image();
@@ -20,7 +21,7 @@ export const flyInit = (canvasW: number, canvasH: number): {
 export const paintFightFly = (function() {
   let imgLoaded = false;
 
-  return (ctx: CanvasRenderingContext2D, fly: ReturnType<typeof flyInit>) => {
+  return (ctx: CanvasRenderingContext2D, fly: IFly) => {
     ctx.beginPath();
     ctx.moveTo(...fly.position);
 
@@ -41,7 +42,7 @@ export const paintFightFly = (function() {
     }
   }
 })();
-export const getFightFlyPath = (fly: ReturnType<typeof flyInit>) => {
+export const getFightFlyPath = (fly: IFly) => {
   const path1 = new Path2D();
   const [xBegin, yBegin] = fly.position;
   
@@ -119,33 +120,8 @@ export const paintEnemy = (ctx: CanvasRenderingContext2D, enemy: IEnemy) => {
 
   ctx.closePath();
 };
-export const paintEnemiesFrame: (params: {
-  ctx: CanvasRenderingContext2D;
-  enemies: TEnemies;
-  canvasH: number;
-  deleteCB?: (...rest: any[]) => any;
-}) => void = ({
-  ctx,
-  enemies,
-  canvasH,
-  deleteCB
-}) => {
-  const step = 1;
-  for (const enemyMap of enemies.entries()) {
-    const enemy = enemyMap[1];
-    
-    paintEnemy(ctx, enemy);
 
-    if (enemy.firstPoint[1] >= canvasH) {
-      enemies.delete(enemyMap[0]);
-      deleteCB?.();
-    } else {
-      enemies.set(enemyMap[0], updateEnemy(enemy, 0, step));
-    }
-  }
-};
-
-export const checkFightFlyEnemyImpact = (fly: ReturnType<typeof flyInit>, enemy: IEnemy) => {
+export const checkFightFlyEnemyImpact = (fly: IFly, enemy: IEnemy) => {
   const enemyLeft = enemy.firstPoint[0];
   const enemyRight = enemy.secondPoint[0];
   const enemyTop = enemy.firstPoint[1];

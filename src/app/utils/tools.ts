@@ -141,35 +141,3 @@ export const checkFightFlyEnemyImpact = (fly: IFly, enemy: IEnemy) => {
     || enemyBottom < flyTop
   );
 };
-
-export const paintBoom = (function() {
-  const boom = new Image();
-
-  let imgLoaded = false;
-
-  boom.src = `${APP_STATIC_PROTOCAL}${APP_STATIC_PATH}/boom.png`;
-
-  return (ctx: CanvasRenderingContext2D, position: [number, number]) => {
-    const boomX = position[0];
-    const boomY = position[1];
-    
-    ctx.beginPath();
-    ctx.moveTo(boomX, boomY);
-    
-    const paintImg = () => {
-      ctx.drawImage(boom, boomX, boomY, boomSize[0], boomSize[1]);
-      ctx.closePath();
-    };
-
-    imgLoaded = boom.complete;
-    
-    if (imgLoaded) {
-      paintImg();
-    }
-    
-    boom.onload = () => {
-      paintImg();
-      imgLoaded = true;
-    }
-  }
-})();

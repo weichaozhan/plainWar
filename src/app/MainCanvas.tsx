@@ -3,8 +3,9 @@ import React, { Component } from 'react';
 import styles from './index.module.scss';
 
 import { flySize, enemiesMoveSpeed, boomSize, bulletMoveSpeed } from './utils/constant';
-import { TEnemies, IFly, flyInit, getFightFlyPath, paintFightFly, paintEnemy, addEnemyLoop, updateEnemy, checkFightFlyEnemyImpact, paintBoom } from './utils/tools';
+import { TEnemies, IFly, flyInit, getFightFlyPath, paintFightFly, paintEnemy, addEnemyLoop, updateEnemy, checkFightFlyEnemyImpact } from './utils/tools';
 import { addBulletLoop, paintBullet, TBullets, updateBullet, checkBulletEnemyImpact } from './utils/bullets';
+import { paintBoom, createBoom, paintBoomsFrame, TBooms } from './utils/booms';
 
 interface IProps {
   bgColor: string;
@@ -32,6 +33,7 @@ class MainCanvas extends Component<IProps, IState> {
   fightflyAnim: number = null;
   enemies: TEnemies = new Map();
   bullets: TBullets = new Map();
+  booms: TBooms = new Map();
 
   isGameOver = false;
 
@@ -66,7 +68,7 @@ class MainCanvas extends Component<IProps, IState> {
       window.addEventListener('resize', this.setRatio);
       
       this.paintPlane();
-      this.moveEnemies();
+      this.paintOneFrame();
     });
   }
   
@@ -95,16 +97,17 @@ class MainCanvas extends Component<IProps, IState> {
       this.fly = flyInit(canvasW, canvasH);
       this.enemies.clear();
       this.bullets.clear();
+      this.booms.clear();
       
       this.paintPlane();
-      this.moveEnemies();
+      this.paintOneFrame();
     } catch(err) {
       console.log('err', err);
     }
   }
 
-  moveEnemies() {
-    const { state, fly, enemies, canvasW, canvasH, bullets } = this;
+  paintOneFrame() {
+    const { state, fly, enemies, canvasW, canvasH, bullets, booms } = this;
 
     addEnemyLoop(enemies, canvasW);
     addBulletLoop(bullets, fly);
@@ -143,7 +146,10 @@ class MainCanvas extends Component<IProps, IState> {
 
       if (enemy.firstPoint[1] >= canvasH || isEnemyDestroied) {
         if (isEnemyDestroied) {
-          isEnemyDestroied && paintBoom(canvasCtx, [enemy.firstPoint[0] - boomSize[0]/2, enemy.firstPoint[1]]);
+          if (isEnemyDestroied) {
+            const newBoom = createBoom([enemy.firstPoint[0] - boomSize[0]/2, enemy.firstPoint[1]]);
+            this.booms.set(newBoom[0], newBoom[1]);
+          }
           this.props.destroySuccess?.();
         }
         if (enemy.firstPoint[1] >= canvasH) {
@@ -157,9 +163,11 @@ class MainCanvas extends Component<IProps, IState> {
       ei++;
     }
 
+    paintBoomsFrame(canvasCtx, booms);
+
     if (!this.isGameOver) {
       this.enemiesAnimTimer = requestAnimationFrame(() => {
-        this.moveEnemies();
+        this.paintOneFrame();
       });
     } else {
       // Game over: boom!

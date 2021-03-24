@@ -2,6 +2,9 @@ declare namespace TestNameSpace {
   type TString = string;
 }
 
+declare const APP_STATIC_PATH: string;
+declare const APP_STATIC_PROTOCAL: string;
+
 declare module 'rc-color-picker' {
   interface IColorPickerProps {
     onChange?: (colors: any) => any;

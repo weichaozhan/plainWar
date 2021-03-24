@@ -1,4 +1,4 @@
-import { app, BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
+import { app, BrowserWindow, BrowserWindowConstructorOptions, session } from 'electron';
 import path from 'path';
 
 import { windowState, windowResizeState } from './constants';
@@ -55,6 +55,12 @@ const createWindow = (): void => {
   if (mainWinResizeState?.maximize) {
     mainWindow.maximize();
   }
+
+  session.defaultSession.protocol.registerFileProtocol('static', (request, callback) => {
+    const fileUrl = request.url.replace('static://', '');
+    const filePath = path.join(app.getAppPath(), '.webpack/renderer', fileUrl);
+    callback(filePath);
+  });
 
   mainWindow.on('minimize', () => {
     mainWindow.hide();

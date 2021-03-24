@@ -1,5 +1,3 @@
-import fightImg from '../assets/fight.png';
-import boomImg from '../assets/boom.png';
 import { flySize, boomSize, enemyAddTimeout } from './constant';
 
 export interface IFly {
@@ -10,7 +8,7 @@ export const flyInit = (canvasW: number, canvasH: number): IFly => {
   const halfCanvasW = canvasW / 2 - flySize[0] / 2;
   const halfCanvasH = canvasH - flySize[1] - 10;
   const img = new Image();
-  img.src = fightImg;
+  img.src = `${APP_STATIC_PROTOCAL}${APP_STATIC_PATH}/fight.png`;
 
   return {
     position: [halfCanvasW, halfCanvasH],
@@ -149,7 +147,7 @@ export const paintBoom = (function() {
 
   let imgLoaded = false;
 
-  boom.src = boomImg;
+  boom.src = `${APP_STATIC_PROTOCAL}${APP_STATIC_PATH}/boom.png`;
 
   return (ctx: CanvasRenderingContext2D, position: [number, number]) => {
     const boomX = position[0];

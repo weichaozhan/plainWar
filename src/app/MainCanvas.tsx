@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import styles from './index.module.scss';
 
 import { flySize, enemiesMoveSpeed, boomSize, bulletMoveSpeed } from './utils/constant';
-import { TEnemies, IFly, flyInit, getFightFlyPath, paintFightFly, paintEnemy, addEnemyLoop, updateEnemy, checkFightFlyEnemyImpact } from './utils/tools';
+import { setLeaderboardStr, getLeaderboardStr, TEnemies, IFly, flyInit, getFightFlyPath, paintFightFly, paintEnemy, addEnemyLoop, updateEnemy, checkFightFlyEnemyImpact } from './utils/tools';
 import { addBulletLoop, paintBullet, TBullets, updateBullet, checkBulletEnemyImpact } from './utils/bullets';
 import { paintBoom, createBoom, paintBoomsFrame, TBooms } from './utils/booms';
 
@@ -174,6 +174,10 @@ class MainCanvas extends Component<IProps, IState> {
       const { position } = fly;
       cancelAnimationFrame(this.fightflyAnim);
       paintBoom(canvasCtx, [position[0] - boomSize[0] / 4, position[1] - boomSize[1] / 4]);
+
+      const preLeaderboard = getLeaderboardStr();
+      preLeaderboard.push(this.props.score);
+      setLeaderboardStr(preLeaderboard.sort((pre: number, now: number) => now - pre).slice(0, 6));
       this.props.onGameOver();
     }
 

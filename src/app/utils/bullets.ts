@@ -1,5 +1,6 @@
 import { flySize, bulletSize, bulletAddTimeout } from './constant';
-import { IEnemy, IFly } from './tools';
+import { IFly } from './fly';
+import { IEnemy } from './enemy';
 
 export interface IBullet {
   position: [number, number];

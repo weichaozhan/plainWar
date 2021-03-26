@@ -64,7 +64,9 @@ export const paintBoomsFrame = (ctx: CanvasRenderingContext2D, booms: TBooms) =>
       booms.delete(key);
     
     } else {
-      const ratio = 1 - boom.frameTimes / boomMaxFrameCount;
+      const boundry = 0.2;
+      const schedule = boom.frameTimes / boomMaxFrameCount;
+      const ratio = schedule > boundry ? 1 - schedule : (schedule / boundry);
 
       const size: typeof boomSize = [boomSize[0] * ratio, boomSize[1] * ratio];
 

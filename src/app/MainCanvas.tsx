@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 import styles from './index.module.scss';
 
 import { flySize, enemiesMoveSpeed, boomSize, bulletMoveSpeed } from './utils/constant';
-import { setLeaderboardStr, getLeaderboardStr, TEnemies, IFly, flyInit, getFightFlyPath, paintFightFly, paintEnemy, addEnemyLoop, updateEnemy, checkFightFlyEnemyImpact } from './utils/tools';
+import { setLeaderboardStr, getLeaderboardStr, checkFightFlyEnemyImpact } from './utils/tools';
+import { flyInit, IFly, getFightFlyPath, paintFightFly } from './utils/fly';
+import { TEnemies, paintEnemy, addEnemyLoop, updateEnemy } from './utils/enemy';
 import { addBulletLoop, paintBullet, TBullets, updateBullet, checkBulletEnemyImpact } from './utils/bullets';
 import { paintBoom, createBoom, paintBoomsFrame, TBooms } from './utils/booms';
 
@@ -118,50 +120,9 @@ class MainCanvas extends Component<IProps, IState> {
 
     paintFightFly(canvasCtx, fly);
     
-    let ei = 0;
-    for (const enemyMap of enemies.entries()) {
-      let isEnemyDestroied = false;
-      const enemy = enemyMap[1];
-      
-      paintEnemy(canvasCtx, enemy);
+    this.paintEnemies();
 
-      // Impact checking: plane with enemy
-      this.isGameOver = this.isGameOver ? true : (checkFightFlyEnemyImpact(fly, enemy) || this.props.score < 0);
-
-      for (const bulletMap of bullets.entries()) {
-        const bullet = bulletMap[1];
-
-        if (ei === 0) {
-          paintBullet(canvasCtx, bullet);
-        }
-
-        isEnemyDestroied = isEnemyDestroied ? true : checkBulletEnemyImpact(bullet, enemy);
-
-        if (bullet.position[1] <= 0 || isEnemyDestroied) {
-          bullets.delete(bulletMap[0]);
-        } else {
-          bullets.set(bulletMap[0], updateBullet(bullet, bulletMoveSpeed));
-        }
-      }
-
-      if (enemy.firstPoint[1] >= canvasH || isEnemyDestroied) {
-        if (isEnemyDestroied) {
-          if (isEnemyDestroied) {
-            const newBoom = createBoom([enemy.firstPoint[0] - boomSize[0]/2, enemy.firstPoint[1]]);
-            this.booms.set(newBoom[0], newBoom[1]);
-          }
-          this.props.destroySuccess?.();
-        }
-        if (enemy.firstPoint[1] >= canvasH) {
-          this.props.escepedEnemy?.();
-        }
-        enemies.delete(enemyMap[0]);
-      } else {
-        enemies.set(enemyMap[0], updateEnemy(enemy, 0, enemiesMoveSpeed));
-      }
-
-      ei++;
-    }
+    this.paintBullets();
 
     paintBoomsFrame(canvasCtx, booms);
 
@@ -180,7 +141,63 @@ class MainCanvas extends Component<IProps, IState> {
       setLeaderboardStr(preLeaderboard.sort((pre: number, now: number) => now - pre).slice(0, 6));
       this.props.onGameOver();
     }
+  }
 
+  paintEnemies() {
+    const { state, enemies, bullets, fly, canvasH } = this;
+    const { canvasCtx } = state;
+
+    for (const enemyMap of enemies.entries()) {
+      let isEnemyDestroied = false;
+      const enemy = enemyMap[1];
+      
+      paintEnemy(canvasCtx, enemy);
+
+      // Impact checking: plane with enemy
+      this.isGameOver = this.isGameOver ? true : (checkFightFlyEnemyImpact(fly, enemy) || this.props.score < 0);
+
+      for (const bulletMap of bullets.entries()) {
+        const bullet = bulletMap[1];
+
+        isEnemyDestroied = isEnemyDestroied ? true : checkBulletEnemyImpact(bullet, enemy);
+
+        if (isEnemyDestroied) {
+          bullets.delete(bulletMap[0]);
+        }
+      }
+
+      if (enemy.firstPoint[1] >= canvasH || isEnemyDestroied) {
+        if (isEnemyDestroied) {
+          if (isEnemyDestroied) {
+            const newBoom = createBoom([enemy.firstPoint[0] - boomSize[0]/2, enemy.firstPoint[1]]);
+            this.booms.set(newBoom[0], newBoom[1]);
+          }
+          this.props.destroySuccess?.();
+        }
+        if (enemy.firstPoint[1] >= canvasH) {
+          this.props.escepedEnemy?.();
+        }
+        enemies.delete(enemyMap[0]);
+      } else {
+        enemies.set(enemyMap[0], updateEnemy(enemy, 0, enemiesMoveSpeed));
+      }
+    }
+  }
+
+  paintBullets() {
+    const { state, bullets } = this;
+    const { canvasCtx } = state;
+
+    for (const bulletMap of bullets.entries()) {
+      const bullet = bulletMap[1];
+      paintBullet(canvasCtx, bullet);
+
+      if (bullet.position[1] <= 0) {
+        bullets.delete(bulletMap[0]);
+      } else {
+        bullets.set(bulletMap[0], updateBullet(bullet, bulletMoveSpeed));
+      }
+    }
   }
 
   resizeCanvas() {

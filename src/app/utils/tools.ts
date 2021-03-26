@@ -1,4 +1,4 @@
-import { flySize, boomSize, enemyAddTimeout } from './constant';
+import { flySize, enemyAddTimeout } from './constant';
 
 export interface IFly {
   position: [number, number];
@@ -140,4 +140,13 @@ export const checkFightFlyEnemyImpact = (fly: IFly, enemy: IEnemy) => {
     || enemyTop > flyBottom
     || enemyBottom < flyTop
   );
+};
+
+export const getLeaderboardStr = () => {
+  const preLeaderboardStr = localStorage.getItem('leaderboard') ?? JSON.stringify([]);
+  return JSON.parse(preLeaderboardStr);
+};
+
+export const setLeaderboardStr = (leaderboard: number[]) => {
+  localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
 };

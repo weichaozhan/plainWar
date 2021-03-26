@@ -28,7 +28,7 @@ export const paintBoom = (function() {
 
   boom.src = `${APP_STATIC_PROTOCAL}${APP_STATIC_PATH}/boom.png`;
 
-  return (ctx: CanvasRenderingContext2D, position: [number, number]) => {
+  return (ctx: CanvasRenderingContext2D, position: [number, number], size = boomSize) => {
     const boomX = position[0];
     const boomY = position[1];
     
@@ -36,7 +36,7 @@ export const paintBoom = (function() {
     ctx.moveTo(boomX, boomY);
     
     const paintImg = () => {
-      ctx.drawImage(boom, boomX, boomY, boomSize[0], boomSize[1]);
+      ctx.drawImage(boom, boomX, boomY, ...size);
       ctx.closePath();
     };
 
@@ -64,9 +64,19 @@ export const paintBoomsFrame = (ctx: CanvasRenderingContext2D, booms: TBooms) =>
       booms.delete(key);
     
     } else {
-      ctx.globalAlpha = 1 - boom.frameTimes / boomMaxFrameCount;
-      paintBoom(ctx, boom.position);
+      const ratio = 1 - boom.frameTimes / boomMaxFrameCount;
+
+      const size: typeof boomSize = [boomSize[0] * ratio, boomSize[1] * ratio];
+
+      const xOffset = (boomSize[0] - size[0]) / 2;
+      const yOffset = (boomSize[1] - size[1]) / 2;
+      
+      const position: IBoom['position'] = [boom.position[0] + xOffset, boom.position[1] + yOffset];
+
+      ctx.globalAlpha = ratio;
+      paintBoom(ctx, position, size);
       ctx.globalAlpha = 1;
+      
       booms.set(key, {
         ...boom,
         frameTimes: boom.frameTimes + 1

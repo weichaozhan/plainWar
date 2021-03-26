@@ -64,3 +64,17 @@ $canvasMarginLeft: 0px;
   z-index: 10;
   background: rgba(0,0,0,0.5);
 }
+
+.leaderboard {
+  width: 300px;
+  margin: 30px auto 0;
+  padding: 20px 10px;
+  list-style: none;
+  background: #fff;
+  border-radius: 8px;
+
+  li {
+    line-height: 2;
+    font-size: 20px;
+  }
+}

@@ -5,6 +5,7 @@ import React, {
   useState,
   FC,
   useRef,
+  useEffect,
 } from 'react';
 import { Provider } from 'react-redux';
 
@@ -12,6 +13,8 @@ import styles from './index.module.scss';
 
 import MainCanvas from './MainCanvas';
 // import ToolBar from './ToolBar';
+
+import { getLeaderboardStr } from './utils/tools';
 
 import './styles/index.css';
 import 'antd/dist/antd.css';
@@ -25,10 +28,18 @@ const canvasBgColor = localStorage.getItem(canvasProps.canvasBgColor) || colors.
 
 const App: FC = () => {
   const mainCanvas = useRef(null);
+
   const [score, setScore] = useState(0);
   const [isGameover, setIsGameOver] = useState(false);
+  
+  const [leaderboard, setLeaderboard] = useState<number[]>([]);
+
   // const [bgClor, setBgColor] = useState(canvasBgColor);
   // const [imgPath, setImgPath]: [string | undefined, Dispatch<SetStateAction<string | undefined>>] = useState(undefined);
+
+  useEffect(() => {
+    setLeaderboard(getLeaderboardStr());
+  }, []);
 
   return <Provider store={store} >
     {/* <ToolBar
@@ -43,6 +54,8 @@ const App: FC = () => {
       bgColor={canvasBgColor}
       onGameOver={() => {
         setIsGameOver(true);
+        
+        setLeaderboard(getLeaderboardStr());
       }}
       destroySuccess={() => {
         setScore(score + 1);
@@ -73,6 +86,12 @@ const App: FC = () => {
         }} >
           Restart
         </button>
+
+        <ul className={styles['leaderboard']} >
+          {leaderboard.map((item, index) => <li key={`leaderboard_item_${index}`} >
+            第 {index + 1} 名：{item} 分
+          </li>)}
+        </ul>
       </div>
     </div>
   </Provider> ;

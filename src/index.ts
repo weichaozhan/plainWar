@@ -7,6 +7,8 @@ import runTray from './mainProcess/tray';
 import menuTemplate from './mainProcess/menu';
 import iconPath from './assets/shortDomain.png';
 
+import { appTitle } from './constants';
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 const NODE_ENV = process.env.NODE_ENV;
@@ -33,7 +35,7 @@ const createWindow = (): void => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, iconPath),
-    title: '飞机大战',
+    title: appTitle,
     // frame: false,
     webPreferences: {
       nodeIntegration: true,

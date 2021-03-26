@@ -1,6 +1,21 @@
-import { flySize } from './constant';
+import { flySize, enemiesMoveSpeed, maxEnemiesMoveSpeed, enemyAddTimeout, minEnemyAddTimeout, bulletAddTimeout, minBulletAddTimeout, enemiesMoveSpeedStep, enemyAddTimeoutStep, enemyDivisor, bulletAddTimeoutStep, bulletDivisor } from './constant';
 import { IFly } from './fly';
 import { IEnemy } from './enemy';
+
+export const getEnemySpeed = (score: number) => {
+  const newSpeed = enemiesMoveSpeed + enemiesMoveSpeedStep * Math.floor(score / enemyDivisor);
+  return newSpeed > maxEnemiesMoveSpeed ? maxEnemiesMoveSpeed : newSpeed;
+};
+
+export const getEnemyTimeout = (score: number) => {
+  const newTimeout = enemyAddTimeout - enemyAddTimeoutStep * Math.floor(score / enemyDivisor);
+  return newTimeout < minEnemyAddTimeout ? minEnemyAddTimeout : newTimeout;
+};
+
+export const getBulletsTimeout = (score: number) => {
+  const newTimeout = bulletAddTimeout - bulletAddTimeoutStep * Math.floor(score / bulletDivisor);
+  return newTimeout < minBulletAddTimeout ? minBulletAddTimeout : newTimeout;
+};
 
 export const checkFightFlyEnemyImpact = (fly: IFly, enemy: IEnemy) => {
   const enemyLeft = enemy.firstPoint[0];

@@ -1,4 +1,5 @@
-import { flySize, bulletSize, bulletAddTimeout } from './constant';
+import { flySize, bulletSize } from './constant';
+import { getBulletsTimeout } from './tools';
 import { IFly } from './fly';
 import { IEnemy } from './enemy';
 
@@ -21,13 +22,13 @@ export const addBullet = (function() {
 export const addBulletLoop = (function() {
   let timePre: number = null;
 
-  return (enemiesGroup: TBullets, fly: IFly) => {
+  return (enemiesGroup: TBullets, fly: IFly, score = 0) => {
     const timeNow = Date.now();
 
     if (timePre === null) {
       addBullet(enemiesGroup, fly);
       timePre = timeNow;
-    } else if (timeNow - timePre > bulletAddTimeout) {
+    } else if (timeNow - timePre > getBulletsTimeout(score)) {
       addBullet(enemiesGroup, fly);
       timePre = timeNow;
     }

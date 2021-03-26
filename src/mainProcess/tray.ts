@@ -3,6 +3,8 @@ import { App, BrowserWindow, Menu, Tray } from 'electron';
 
 import iconPath from '../assets/shortDomain.png';
 
+import { appTitle } from '../constants';
+
 export let tray: Tray = null;
 
 const focusWindow = (mainWindow: BrowserWindow) => {
@@ -34,7 +36,7 @@ export default function (mainWindow: BrowserWindow, app: App) {
   const contextMenu = buildMenu(mainWindow, app);
   tray = new Tray(path.resolve(__dirname, iconPath));
   
-  tray.setToolTip('测试');
+  tray.setToolTip(appTitle);
   tray.setContextMenu(contextMenu);
 
   tray.on('click', () => {

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 import styles from './index.module.scss';
 
-import { flySize, enemiesMoveSpeed, boomSize, bulletMoveSpeed } from './utils/constant';
-import { setLeaderboardStr, getLeaderboardStr, checkFightFlyEnemyImpact } from './utils/tools';
+import { flySize, boomSize, bulletMoveSpeed } from './utils/constant';
+import { setLeaderboardStr, getLeaderboardStr, checkFightFlyEnemyImpact, getEnemySpeed } from './utils/tools';
 import { flyInit, IFly, getFightFlyPath, paintFightFly } from './utils/fly';
 import { TEnemies, paintEnemy, addEnemyLoop, updateEnemy } from './utils/enemy';
 import { addBulletLoop, paintBullet, TBullets, updateBullet, checkBulletEnemyImpact } from './utils/bullets';
@@ -111,8 +111,8 @@ class MainCanvas extends Component<IProps, IState> {
   paintOneFrame() {
     const { state, fly, enemies, canvasW, canvasH, bullets, booms } = this;
 
-    addEnemyLoop(enemies, canvasW);
-    addBulletLoop(bullets, fly);
+    addEnemyLoop(enemies, canvasW, this.props.score);
+    addBulletLoop(bullets, fly, this.props.score);
 
     const { canvasCtx } = state;
 
@@ -147,6 +147,9 @@ class MainCanvas extends Component<IProps, IState> {
     const { state, enemies, bullets, fly, canvasH } = this;
     const { canvasCtx } = state;
 
+    // The score below zero 
+    this.isGameOver = this.isGameOver ? true : this.props.score < 0;
+
     for (const enemyMap of enemies.entries()) {
       let isEnemyDestroied = false;
       const enemy = enemyMap[1];
@@ -154,7 +157,7 @@ class MainCanvas extends Component<IProps, IState> {
       paintEnemy(canvasCtx, enemy);
 
       // Impact checking: plane with enemy
-      this.isGameOver = this.isGameOver ? true : (checkFightFlyEnemyImpact(fly, enemy) || this.props.score < 0);
+      this.isGameOver = this.isGameOver ? true : checkFightFlyEnemyImpact(fly, enemy);
 
       for (const bulletMap of bullets.entries()) {
         const bullet = bulletMap[1];
@@ -179,7 +182,7 @@ class MainCanvas extends Component<IProps, IState> {
         }
         enemies.delete(enemyMap[0]);
       } else {
-        enemies.set(enemyMap[0], updateEnemy(enemy, 0, enemiesMoveSpeed));
+        enemies.set(enemyMap[0], updateEnemy(enemy, 0, getEnemySpeed(this.props.score)));
       }
     }
   }

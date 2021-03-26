@@ -1,4 +1,4 @@
-import { enemyAddTimeout } from './constant';
+import { getEnemyTimeout } from './tools';
 
 export interface IEnemy {
   firstPoint: [number, number];
@@ -30,13 +30,13 @@ export const addEnemy = (function() {
 export const addEnemyLoop = (function() {
   let timePre: number = null;
 
-  return (enemiesGroup: TEnemies, canvasWith: number) => {
+  return (enemiesGroup: TEnemies, canvasWith: number, score = 0) => {
     const timeNow = Date.now();
 
     if (timePre === null) {
       addEnemy(enemiesGroup, canvasWith);
       timePre = timeNow;
-    } else if (timeNow - timePre > enemyAddTimeout) {
+    } else if (timeNow - timePre > getEnemyTimeout(score)) {
       addEnemy(enemiesGroup, canvasWith);
       timePre = timeNow;
     }

@@ -1,13 +1,11 @@
 import { app, BrowserWindow, BrowserWindowConstructorOptions, session } from 'electron';
 import path from 'path';
 
-import { windowState, windowResizeState } from './constants';
+import { windowState, windowResizeState, appTitle } from './constants';
 import StorageNode from './mainProcess/storage';
 import runTray from './mainProcess/tray';
 import menuTemplate from './mainProcess/menu';
 import iconPath from './assets/shortDomain.png';
-
-import { appTitle } from './constants';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 

@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 
 import styles from './index.module.scss';
 
-import { flySize, boomSize, bulletMoveSpeed } from './utils/constant';
+import { flySize, boomSize, bulletMoveSpeed, fireMaxXStep, fireMaxYStep, fireMinXStep, fireMinSize, fireMinYStep, fireMaxSize, fireFrameMax } from './utils/constant';
 import { setLeaderboardStr, getLeaderboardStr, checkFightFlyEnemyImpact, getEnemySpeed } from './utils/tools';
-import { flyInit, IFly, getFightFlyPath, paintFightFly } from './utils/fly';
+import { flyInit, IFly, getFightFlyPath, paintFightFly, paintFire } from './utils/fly';
 import { TEnemies, paintEnemy, addEnemyLoop, updateEnemy } from './utils/enemy';
 import { addBulletLoop, paintBullet, TBullets, updateBullet, checkBulletEnemyImpact } from './utils/bullets';
 import { paintBoom, createBoom, paintBoomsFrame, TBooms } from './utils/booms';
@@ -119,6 +119,7 @@ class MainCanvas extends Component<IProps, IState> {
     canvasCtx.clearRect(0, 0, canvasW, canvasH);
 
     paintFightFly(canvasCtx, fly);
+    this.paintFire();
     
     this.paintEnemies();
 
@@ -185,6 +186,28 @@ class MainCanvas extends Component<IProps, IState> {
         enemies.set(enemyMap[0], updateEnemy(enemy, 0, getEnemySpeed(this.props.score)));
       }
     }
+  }
+
+  paintFire() {
+    const { position, fireFrameCount } = this.fly;
+    
+    const halfCountMax = fireFrameMax / 2;
+
+    if (fireFrameCount < halfCountMax) {
+      this.fly.firePos = [position[0] + fireMaxXStep, position[1] + fireMaxYStep];
+      this.fly.fireSize = fireMaxSize;
+    } else {
+      this.fly.firePos = [position[0] + fireMinXStep, position[1] + fireMinYStep];
+      this.fly.fireSize = fireMinSize;
+    }
+
+    this.fly.fireFrameCount++;
+
+    if (this.fly.fireFrameCount > fireFrameMax) {
+      this.fly.fireFrameCount = 0;
+    }
+    
+    paintFire(this.state.canvasCtx, this.fly);
   }
 
   paintBullets() {

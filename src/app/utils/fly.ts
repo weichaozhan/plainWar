@@ -1,4 +1,4 @@
-import { flySize, fireMaxXStep, fireMaxYStep, fireMaxSize, fireFrameMax } from './constant';
+import { flySize, fireMaxXStep, fireMaxYStep, fireMaxSize, fireFrameMax, fireWidth } from './constant';
 
 export interface IFly {
   position: [number, number];
@@ -9,7 +9,7 @@ export interface IFly {
 }
 export const flyInit = (canvasW: number, canvasH: number): IFly => {
   const halfCanvasW = canvasW / 2 - flySize[0] / 2;
-  const halfCanvasH = canvasH - flySize[1] - 10;
+  const halfCanvasH = canvasH - flySize[1] - fireMaxSize;
   const img = new Image();
   img.src = `${APP_STATIC_PROTOCAL}${APP_STATIC_PATH}/fight.png`;
 
@@ -55,9 +55,11 @@ export const paintFire = (ctx: CanvasRenderingContext2D, fly: IFly) => {
   const { firePos, fireSize } = fly;
   const [fireX, fireY] = firePos;
 
+  const halfFireWidth = fireWidth / 2;
+
   ctx.moveTo(fireX, fireY);
-  ctx.lineTo(fireX + fireSize, fireY);
-  ctx.lineTo(fireX + fireSize / 2, fireY + fireSize);
+  ctx.lineTo(fireX + fireWidth, fireY);
+  ctx.lineTo(fireX + halfFireWidth, fireY + fireSize);
   ctx.moveTo(fireX, fireY);
   ctx.fillStyle = 'red';
   ctx.fill();

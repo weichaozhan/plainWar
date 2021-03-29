@@ -1,15 +1,18 @@
 export const boomSize: [number, number] = [80, 80];
 export const flySize: [number, number] = [38, 50];
 
-export const fireFrameMax = 20;
+export const fireFrameMax = 8;
+export const fireWidth = 6;
 
-export const fireMaxSize = 10;
-export const fireMaxXStep = 14;
-export const fireMaxYStep = flySize[1] - 10;
+export const fireMaxSize = 50;
+export const fireMaxXStep = 16;
+export const fireMaxYStep = flySize[1] - 12;
 
-export const fireMinSize = 6;
-export const fireMinXStep = fireMaxXStep + (fireMaxSize - fireMinSize) / 2;
-export const fireMinYStep = flySize[1] - 10;
+export const fireMinSize = fireMaxSize * 5 / 6;
+export const fireMinXStep = fireMaxXStep;
+// export const fireMinXStep = fireMaxXStep + (fireMaxSize - fireMinSize) / 2;
+// export const fireMinYStep = flySize[1] - 10;
+export const fireMinYStep = fireMaxYStep;
 
 // Enemy
 export const enemiesMoveSpeed = 1;

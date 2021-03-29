@@ -59,7 +59,7 @@ export const paintEnemy = (ctx: CanvasRenderingContext2D, enemy: IEnemy) => {
   ctx.lineTo(...enemy.thirdPoint);
   ctx.lineTo(...enemy.firstPoint);
 
-  ctx.fillStyle = 'gray';
+  ctx.fillStyle = '#f15307';
 
   ctx.fill();
 

@@ -8,6 +8,7 @@ import { flyInit, IFly, getFightFlyPath, paintFightFly, paintFire } from './util
 import { TEnemies, paintEnemy, addEnemyLoop, updateEnemy } from './utils/enemy';
 import { addBulletLoop, paintBullet, TBullets, updateBullet, checkBulletEnemyImpact } from './utils/bullets';
 import { paintBoom, createBoom, paintBoomsFrame, TBooms } from './utils/booms';
+import { paintBG } from './utils/bg';
 
 interface IProps {
   bgColor: string;
@@ -42,6 +43,8 @@ class MainCanvas extends Component<IProps, IState> {
   fly: IFly = null;
 
   enemiesAnimTimer: number = null;
+
+  bgY = 0;
   
   constructor(props: any) {
     super(props);
@@ -68,7 +71,7 @@ class MainCanvas extends Component<IProps, IState> {
       canvasCtx: context
     }, () => {
       window.addEventListener('resize', this.setRatio);
-      
+      this.paintBG();
       this.paintPlane();
       this.paintOneFrame();
     });
@@ -95,6 +98,7 @@ class MainCanvas extends Component<IProps, IState> {
   
       this.isGameOver = false;
       this.isPointInFightfly = false;
+      this.bgY = 0;
   
       this.fly = flyInit(canvasW, canvasH);
       this.enemies.clear();
@@ -118,6 +122,7 @@ class MainCanvas extends Component<IProps, IState> {
 
     canvasCtx.clearRect(0, 0, canvasW, canvasH);
 
+    this.paintBG();
     paintFightFly(canvasCtx, fly);
     this.paintFire();
     
@@ -186,6 +191,23 @@ class MainCanvas extends Component<IProps, IState> {
         enemies.set(enemyMap[0], updateEnemy(enemy, 0, getEnemySpeed(this.props.score)));
       }
     }
+  }
+
+  paintBG() {
+    const { bgY, canvasW, canvasH, state } = this;
+
+    if (bgY >= canvasH) {
+      this.bgY = 0;
+    }
+
+    paintBG({
+      ctx: state.canvasCtx,
+      y: this.bgY, 
+      canvasW: canvasW,
+      canvasH: canvasH
+    });
+
+    this.bgY++;
   }
 
   paintFire() {

@@ -8,7 +8,7 @@ export const fireMaxSize = 50;
 export const fireMaxXStep = 16;
 export const fireMaxYStep = flySize[1] - 12;
 
-export const fireMinSize = fireMaxSize * 5 / 6;
+export const fireMinSize = fireMaxSize * (2 / 3);
 export const fireMinXStep = fireMaxXStep;
 // export const fireMinXStep = fireMaxXStep + (fireMaxSize - fireMinSize) / 2;
 // export const fireMinYStep = flySize[1] - 10;
@@ -31,4 +31,4 @@ export const minBulletAddTimeout = 60;
 export const bulletMoveSpeed = 10;
 // Bullet Step
 export const bulletAddTimeoutStep = 20;
-export const bulletDivisor = 10;
+export const bulletDivisor = 6;

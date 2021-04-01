@@ -1,14 +1,14 @@
 export const boomSize: [number, number] = [80, 80];
 export const flySize: [number, number] = [38, 50];
 
-export const fireFrameMax = 8;
+export const fireFrameMax = 16;
 export const fireWidth = 6;
 
 export const fireMaxSize = 50;
 export const fireMaxXStep = 16;
 export const fireMaxYStep = flySize[1] - 12;
 
-export const fireMinSize = fireMaxSize * (2 / 3);
+export const fireMinSize = fireMaxSize * (3 / 5);
 export const fireMinXStep = fireMaxXStep;
 // export const fireMinXStep = fireMaxXStep + (fireMaxSize - fireMinSize) / 2;
 // export const fireMinYStep = flySize[1] - 10;
